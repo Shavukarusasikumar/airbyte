@@ -54,8 +54,8 @@ allprojects {
     io.airbyte.gradle.MicronautBeanDefinitionVerification.configure(project)
 
     dependencies {
-        api platform('org.jetbrains.kotlin:kotlin-bom:2.0.10')
-        api platform('org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.8.1')
+        api platform('org.jetbrains.kotlin:kotlin-bom:2.4.21')
+        api platform('org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.11.0')
         api platform('com.fasterxml.jackson:jackson-bom:2.21.7')
         api platform("io.micronaut:micronaut-core-bom:$micronautVersion")
         // micronaut-test is not managed by micronaut-core-bom.
@@ -72,14 +72,11 @@ allprojects {
         kspTest platform("io.micronaut:micronaut-core-bom:$micronautVersion")
         kspTest 'io.micronaut:micronaut-inject-kotlin'
 
-        // micronaut-test-bom 4.10.3 constrains mockk to 1.13.17. mockk 1.13.16-1.14.7 unbox a value
-        // class returned from any property getter (ValueClassSupport.maybeUnboxValueForMethodReturn)
-        // regardless of the getter's declared type; recording `every { rawData }` on a mocked
-        // DestinationRecordRaw then creates a temporary mock of the sealed DestinationRecordSource
-        // (mockk proxies its first subclass, the DestinationRecordJsonSource value class), unboxes it
-        // by calling the mocked getter, and recurses until the heap is gone. Fixed upstream in
-        // mockk 1.14.9, which needs kotlin-stdlib 2.2. Keep master's version until then.
-        testImplementation("io.mockk:mockk") { version { strictly "1.13.13" } }
+        // Not below 1.14.9: mockk 1.13.16-1.14.7 unbox a value class returned from any property
+        // getter regardless of the getter's declared type, so recording `every { rawData }` on a
+        // mocked DestinationRecordRaw recursed until the heap was gone (fixed upstream in 1.14.9,
+        // which needs the Kotlin 2.2+ runtime). micronaut-test-bom 4.10.3 only constrains 1.13.17.
+        testImplementation("io.mockk:mockk:1.14.11")
     }
 
     publishing {

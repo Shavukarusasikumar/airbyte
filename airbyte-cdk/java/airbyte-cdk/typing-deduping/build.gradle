@@ -22,4 +22,6 @@ dependencies {
     testFixturesApi testFixtures(project(':airbyte-cdk:java:airbyte-cdk:airbyte-cdk-core'))
     testFixturesImplementation 'org.mockito.kotlin:mockito-kotlin:6.4.0'
     testImplementation "io.mockk:mockk:1.13.11"
+    // KGP >= 2.0.10 (KT-68278): test no longer inherits testFixturesImplementation deps.
+    testImplementation "org.jetbrains.kotlin:kotlin-test"
 }
